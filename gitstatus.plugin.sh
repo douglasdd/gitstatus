@@ -77,7 +77,11 @@ function gitstatus_start() {
 
     local uname_sm
     uname_sm="$(command uname -sm)" || return
-    uname_sm="${uname_sm,,}"
+    if (( BASH_VERSINFO[0] >= 4 )); then
+      uname_sm="${uname_sm,,}"
+    else
+      uname_sm="$(echo "$uname_sm" | tr '[:upper:]' '[:lower:]')"
+    fi
     local uname_s="${uname_sm% *}"
     local uname_m="${uname_sm#* }"
 
