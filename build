@@ -461,7 +461,7 @@ case "$gitstatus_kernel" in
   ;;
   msys_nt-*|mingw32_nt-*|mingw64_nt-*|cygwin_nt-*)
     if ! printf '%s' "$gitstatus_kernel" | grep -Eqx '[^-]+-[0-9]+\.[0-9]+(-.*)?'; then
-      >&2 echo "[error] unsupported kernel, sorry."
+      >&2 echo '[error] unsupported kernel, sorry!'
       exit 1
     fi
     gitstatus_kernel="$(printf '%s' "$gitstatus_kernel" | sed 's/^\([^-]*-[0-9]*\.[0-9]*\).*/\1/')"
@@ -475,7 +475,7 @@ case "$gitstatus_kernel" in
     fi
   ;;
   *)
-    >&2 echo "[error] unsupported kernel, sorry."
+    >&2 echo '[error] unsupported kernel, sorry!'
     exit 1
   ;;
 esac
