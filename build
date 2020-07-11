@@ -11,7 +11,7 @@ fi
 
 export LC_ALL=C
 
-usage="$(command cat <<\END
+usage='
 Usage: build [-m ARCH] [-c CPU] [-d CMD] [-i IMAGE] [-s] [-w]
 
 Options:
@@ -29,12 +29,10 @@ Options:
             succeed; on some operating systems this option is not
             supported; on others it can have partial effect
   -w        automatically download tarballs for dependencies if they
-            don't already exist in ./deps; dependencies are described
+            don'\''t already exist in ./deps; dependencies are described
             in ./build.info
-END
-)"
-
-build="$(command cat <<\END
+'
+build='
 outdir="$(command pwd)"
 
 if command -v mktemp >/dev/null 2>&1; then
@@ -89,7 +87,7 @@ if [ -n "$gitstatus_install_tools" ]; then
     ;;
     darwin)
       if ! command -v make >/dev/null 2>&1 || ! command -v gcc >/dev/null 2>&1; then
-        >&2 echo "[error] please run 'xcode-select --install' and retry"
+        >&2 echo "[error] please run '\''xcode-select --install'\'' and retry"
         exit 1
       fi
       if ! command -v brew >/dev/null 2>&1; then
@@ -232,7 +230,7 @@ elif command -v sha256sum >/dev/null 2>/dev/null; then
   libgit2_actual_sha256="${libgit2_actual_sha256%% *}"
 elif command -v sha256 >/dev/null 2>/dev/null; then
   libgit2_actual_sha256="$(command sha256 -- "$libgit2_tarball" </dev/null)"
-  # Ignore sha256 output if it's from hashalot. It's incompatible.
+  # Ignore sha256 output if it'\''s from hashalot. It'\''s incompatible.
   if [ ${#libgit2_actual_sha256} -lt 64 ]; then
     libgit2_actual_sha256=
   else
@@ -293,12 +291,12 @@ command mkdir -- "$workdir"/repo
 command git -C "$workdir"/repo init
 command git -C "$workdir"/repo config user.name "Your Name"
 command git -C "$workdir"/repo config user.email "you@example.com"
-command git -C "$workdir"/repo commit --allow-empty --allow-empty-message --no-gpg-sign -m ''
+command git -C "$workdir"/repo commit --allow-empty --allow-empty-message --no-gpg-sign -m ""
 
 resp="$(printf "hello\037$workdir/repo\036" | "$app".tmp)"
 [ -n "$resp" -a -z "${resp##hello*1*$workdir/repo*master*}" ]
 
-resp="$(printf 'hello\037\036' | "$app".tmp)"
+resp="$(printf '\''hello\037\036'\'' | "$app".tmp)"
 [ -n "$resp" -a -z "${resp##hello*0*}" ]
 
 command mv -f -- "$app".tmp "$app"
@@ -309,8 +307,7 @@ command cat >&2 <<-END
 	-------------------------------------------------
 	SUCCESS: created usrbin/$appname
 	END
-END
-)"
+'
 
 docker_image=
 docker_cmd=
@@ -464,7 +461,7 @@ case "$gitstatus_kernel" in
   ;;
   msys_nt-*|mingw32_nt-*|mingw64_nt-*|cygwin_nt-*)
     if ! printf '%s' "$gitstatus_kernel" | grep -Eqx '[^-]+-[0-9]+\.[0-9]+(-.*)?'; then
-      >&2 echo '[error] unsupported kernel, sorry!'
+      >&2 echo "[error] unsupported kernel, sorry."
       exit 1
     fi
     gitstatus_kernel="$(printf '%s' "$gitstatus_kernel" | sed 's/^\([^-]*-[0-9]*\.[0-9]*\).*/\1/')"
@@ -478,7 +475,7 @@ case "$gitstatus_kernel" in
     fi
   ;;
   *)
-    >&2 echo '[error] unsupported kernel, sorry!'
+    >&2 echo "[error] unsupported kernel, sorry."
     exit 1
   ;;
 esac
