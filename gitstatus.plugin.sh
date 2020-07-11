@@ -130,7 +130,7 @@ function gitstatus_start() {
         (
           local fd_in fd_out
           exec {fd_in}<"$req_fifo" {fd_out}>"$resp_fifo" || exit
-          echo "$BASHPID" >&"$fd_out"
+          subshell_pid >&"$fd_out"
 
           local _gitstatus_bash_daemon _gitstatus_bash_version _gitstatus_bash_downloaded
 
@@ -238,7 +238,7 @@ function gitstatus_start() {
     fi
 
     _GITSTATUS_DIRTY_MAX_INDEX_SIZE=$max_dirty
-    _GITSTATUS_CLIENT_PID="$BASHPID"
+    _GITSTATUS_CLIENT_PID="$(subshell_pid)"
   }
 
   if ! gitstatus_start_impl; then
@@ -285,7 +285,7 @@ function gitstatus_start() {
 
 # Stops gitstatusd if it's running.
 function gitstatus_stop() {
-  [[ "${_GITSTATUS_CLIENT_PID:-$BASHPID}" == "$BASHPID" ]]                         || return 0
+  [[ "${_GITSTATUS_CLIENT_PID:-$(subshell_pid)}" == "$(subshell_pid)" ]]                         || return 0
   [[ -z "${_GITSTATUS_REQ_FD:-}"    ]] || exec {_GITSTATUS_REQ_FD}>&-              || true
   [[ -z "${_GITSTATUS_RESP_FD:-}"   ]] || exec {_GITSTATUS_RESP_FD}>&-             || true
   [[ -z "${GITSTATUS_DAEMON_PID:-}" ]] || kill "$GITSTATUS_DAEMON_PID" &>/dev/null || true
@@ -473,4 +473,17 @@ function gitstatus_query() {
 # If it returns non-zero, gitstatus_query is guaranteed to return non-zero.
 function gitstatus_check() {
   [[ -n "$GITSTATUS_DAEMON_PID" ]]
+}
+
+# Usage: subshell_pid
+#
+# Works exactly like:  echo "$BASHPID"
+# * In Bash versions >= 4.0 uses native $BASHPID
+# * In Bash versions < 4.0 has to fork perl
+function subshell_pid () {
+  if (( BASH_VERSINFO[0] >= 4 )); then
+    echo "$BASHPID"
+  else
+    perl -le 'print getppid'
+  fi
 }
